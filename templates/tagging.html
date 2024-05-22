@@ -1,0 +1,357 @@
+{% block content %}
+<div class="progress">
+    <h3>Progress:&nbsp;</h3>
+    <progress value={{ id }} max="10"> </progress>
+    <h4>&nbsp;{{ id }}</h4>
+    <h4>/10</h4>
+</div>
+
+<header>
+    <div class="review-button">
+        <a href="{% url 'instructions' %}" class="button">Review Instructions</a>
+    </div>
+    <div class="logout-button">
+        <form id="logout-form" method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</header>
+
+<br><br><br><br>
+<!-- if the user has completed all tagging -->
+{% if id == 10 %}
+    <div class="container">
+        <h1>All complete,<br>thank you!</h1><br>
+    </div>
+<!-- if there are still response to tag -->
+{% else %}
+    <div id="response">
+        <p>
+            <div class="container">
+                <h3>Student Response</h3>
+                {% for sentence in current_response|slice:"0:-1" %}
+                    <!-- wrap each sentence in clickable div -->
+                    <span id="sentence{{ forloop.counter }}" class="clickable-sentence">{{ sentence }}.</span>
+                {% endfor %}
+            </div>
+        </p>   
+    </div>
+    <!-- dynamically created forms stored here -->
+    <div id="forms" class="forms"></div>
+
+    <button onclick="sendData()">Submit</button>
+
+    <br><br>
+{% endif %}
+
+{% endblock content %}
+
+<script>
+    // script used to change sentence color + sends sentence for create/delete forms
+    document.querySelectorAll('.clickable-sentence').forEach(item => {
+      item.addEventListener('click', event => {
+        if (item.style.color === 'blue') {
+          item.style.color = 'black';
+          removeForm(item.innerHTML);
+        } else {
+          item.style.color = 'blue';
+          showForm(item.innerHTML) // sends the sentence as a string
+        }
+      });
+    });
+
+    // script to create form
+    function showForm(sentence) {
+        let form = document.createElement('form');
+        form.setAttribute('class', 'form')
+        id = "form-" + sentence
+        form.setAttribute("id", id)
+
+        // puts sentence in form
+        div = document.createElement("div")
+        sent = document.createTextNode(sentence)
+        div.appendChild(sent)
+        div.setAttribute('name', 'sentence') 
+        form.appendChild(div)
+
+        form.appendChild(document.createElement('br'));
+        form.appendChild(document.createElement('br')); 
+
+        // Options for radio input
+        var knowledge = ['Declarative Knowledge', 'Procedural Knowledge', 'Unknown']
+        var confidence = ['Confident', 'Unconfident', 'N/A']
+        var strength = ['Strong', 'Mild']
+
+        createRadio(knowledge, form)
+        createRadio(confidence, form)
+        createRadio(strength, form)
+
+        // create text field for additional comments
+        let text = document.createElement('input')
+        text.setAttribute('type', 'text')
+        text.setAttribute('id', 'additional')
+        text.setAttribute('name', 'additional')
+
+        // create label
+        let label = document.createElement('label');
+        label.textContent = "Additional Comments:";
+        label.setAttribute('for', 'additional');
+        
+        // add text input + label to form
+        form.appendChild(label)
+        form.appendChild(text)
+
+        // wrap each form in a container
+        let container = document.createElement('div')
+        container.setAttribute('class', 'container')
+        container.setAttribute("id", id)
+        container.appendChild(form)
+        
+        // add form to document inside form div
+        document.getElementById('forms').appendChild(container);
+
+        createStrengthOptions(form);
+    }
+    
+    // Script that creates radio input fields
+    let s = 0
+    function createRadio(option_array, form) {
+        
+        option_array.forEach((option, index) => {
+            // Create a radio input element
+            let radio = document.createElement('input');
+            radio.setAttribute('type', 'radio');
+            radio.setAttribute('id', form.id + s++)
+            radio.setAttribute('name', option_array); // Set the same name for all radio buttons to create a group
+            radio.setAttribute('value', option); // Set the value of the radio button
+
+            // Create a label element
+            let label = document.createElement('label');
+            label.textContent = option; // Set the label text
+            
+            // Check if the option is 'Strong' or 'Mild'
+            if (option === 'Strong' || option === 'Mild') {
+                // Create a div with class 'strong-mild-div' if it doesn't exist
+                let strongMildDiv = form.querySelector('.strong-mild-div');
+                if (!strongMildDiv) {
+                    strongMildDiv = document.createElement('div');
+                    strongMildDiv.classList.add('strong-mild-div');
+                    strongMildDiv.style.display = 'none'; // Set display to 'none'
+                    form.appendChild(strongMildDiv);
+                }
+
+                // Append the radio button and label to the 'strong-mild-div'
+                strongMildDiv.appendChild(radio.cloneNode(true));
+                strongMildDiv.appendChild(label.cloneNode(true));
+
+                // Append a line break after each option in the 'strong-mild-div'
+                if (index < option_array.length - 1) {
+                    strongMildDiv.appendChild(document.createElement('br'));
+                }
+            } else {
+                // Append the radio button and label to the form
+                form.appendChild(radio);
+                form.appendChild(label);
+                
+                // Append a line break after each option
+                if (index < option_array.length - 1) {
+                    form.appendChild(document.createElement('br'));
+                }
+            }
+        });
+
+        // Append two line breaks after each input field
+        form.appendChild(document.createElement('br'));
+        form.appendChild(document.createElement('br'));
+    }
+
+    // Script to create "Strength" radio options based on confidence selection
+    function createStrengthOptions(form) {
+        let confidenceRadios = form.querySelectorAll('[name="Confident,Unconfident,N/A"]');
+        confidenceRadios.forEach(confidenceRadio => {
+            confidenceRadio.addEventListener('change', () => {
+                let strongMildDiv = form.querySelector('.strong-mild-div');
+                let value = getRadioValue(form.querySelectorAll('[name="Confident,Unconfident,N/A"]'))
+                if (value === 'Confident' || value === 'Unconfident') {
+                    strongMildDiv.style.display = 'block'; // Show the "Strength" options
+                } else {
+                    strongMildDiv.style.display = 'none'; // Hide the "Strength" options
+                }
+            });
+        });
+    }
+
+    // Script to remove form from document
+    function removeForm(sentence) {
+        let form = document.getElementById("form-" + sentence); // Retrieve form by ID
+        if (form) {
+            form.remove(); // Remove form
+        }
+    }
+
+    // Script that retrieves the selected radio box from a radio input group
+    function getRadioValue(radio) {
+        for (var i = 0; i < radio.length; i++) {
+        // Check if the current radio button is checked
+        if (radio[i].checked) {
+            // Return the value of the checked radio button
+            return radio[i].value;
+        }
+    }
+    }
+
+    // Script to send data to Django backend and save to database
+    function sendData() {
+        var data = []
+        let forms = document.querySelectorAll('#forms .form')
+        let allFieldsFilled = true; // Flag to track if all fields are filled
+
+        forms.forEach((form, index ) => {
+
+            // Get values from radio inputs
+            var knowledge = getRadioValue(form.querySelectorAll('[name="Declarative Knowledge,Procedural Knowledge,Unknown"]'))
+            var confidence = getRadioValue(form.querySelectorAll('[name="Confident,Unconfident,N/A"]'))
+            var strength = getRadioValue(form.querySelectorAll('[name="Strong,Mild"]'))
+
+            // Check if any radio button is not selected
+            if (!knowledge || !confidence) {
+                allFieldsFilled = false;
+                return; // Exit forEach loop early if any field is not filled
+            }
+
+            if(!strength) {
+                strength = 'N/A'
+            }
+
+            // Create data object
+            const entry = {
+                sentence: form.querySelector('[name="sentence"]').innerHTML,
+                knowledge: knowledge,
+                confidence: confidence,
+                strength: strength,
+                comments: form.querySelector('[name="additional"]').value
+            }
+            data.push(entry);
+        })
+
+        // If any field is not filled, display a popup alert
+        if (!allFieldsFilled) {
+            alert("Please fill out all fields before submitting.");
+            return; // Exit the function early
+        }
+
+        const url = "{% url 'save_data' %}" // URL for django backend
+
+        // Post data to backend
+        const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(data)
+            };
+        
+            fetch(url, options)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Get return values from backend if request successful 
+                })
+                .then(data => {
+                    console.log('Response from server:', data);
+                    location.reload() // Reload page to load the users next student response 
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+    }
+
+</script>
+
+<style>
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .clickable-sentence:hover{
+        background-color: rgb(200, 200, 200);
+        cursor: pointer;
+    }
+
+    progress {
+        width: 100%;
+        height: 30px;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        display: block;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f8ff; /* light blue background */
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+        background-color: #f8f9fa; /* grey box background */
+        padding: 20px;
+        margin: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: block;
+    }
+
+    .logout-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .review-button {
+        position: absolute;
+        top: 10px;
+        right: 190px;
+    }
+
+    button,
+    a {
+        display: block;
+        width: 150px; /* Adjust width as needed */
+        margin: 0 auto;
+        text-align: center;
+        padding: 10px;
+        background-color: #007bff; /* blue button color */
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 15px;
+        border: none;
+        margin-top: 20px;
+    }
+
+    button:hover,
+    a:hover {
+        background-color: #0056b3; /* darker blue on hover */
+    }
+
+    .progress {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: flex;
+        width: 70%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #additional{
+        width: 100%;
+    }
+    
+</style>

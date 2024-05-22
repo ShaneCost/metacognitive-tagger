@@ -1,0 +1,52 @@
+{% block content %}
+<div class="container">
+    <h1>Metacognitive Language Tagging Application</h1><br>
+    <a href="{% url 'login' %}">Login</a> 
+</div>
+{% endblock content %}
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f8ff; /* light blue background */
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+        background-color: #f8f9fa; /* grey box background */
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    button,
+    a {
+        display: block;
+        width: 150px; /* Adjust width as needed */
+        margin: 0 auto;
+        text-align: center;
+        padding: 10px;
+        background-color: #007bff; /* blue button color */
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 15px;
+        border: none;
+    }
+
+    button:hover,
+    a:hover {
+        background-color: #0056b3; /* darker blue on hover */
+    }
+
+</style>

@@ -1,0 +1,21 @@
+<header>
+    <form id="logout-form" method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form> 
+</header>
+
+<style>
+    header {
+        display: flex;
+        justify-content: right;
+        align-items: center;
+        padding: 5px;
+    }
+
+    #logout-form {
+        margin: 0;
+    }
+</style>
+
+{% block content %}{% endblock content %}

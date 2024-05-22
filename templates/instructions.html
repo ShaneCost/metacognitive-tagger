@@ -1,0 +1,108 @@
+{% block content %}
+    <div class="container">
+        <header>
+            <div class="logout-button">
+                <form id="logout-form" method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            </div>
+        </header>
+    
+        <div class="instructions">
+            <h1>Instructions</h1>
+            <p>
+                You will be presented with a students response to a circuit analysis
+                question. Each sentence of a given response is selectable. You are to select
+                each sentence of the response that suggests the student was engaging in
+                active metacognition. After a sentence is selected, the sentence will be
+                displayed below the overall student response along with radio button
+                selection fields that pertain to the metacognitive nature of the statement.
+                The first field asks you to judge whether the sentence is an example of
+                “Declarative Knowledge” or “Procedural Knowledge”. Should neither apply,
+                “Unknown” should be selected.
+            </p>
+            <p>
+                The two additional radio flyer fields ask you to judge whether the
+                statement suggests that student was expressing confidence or lack of
+                confidence and the intensity of the statement (strong or mild) in terms of
+                this confidence or lack of confidence. Should the statement be ambiguous
+                in nature in terms of confidence or should a judgement of confidence not
+                be relevant, select the “not applicable”. To reiterate, the last two fields
+                pertain to the nature of the metacognitive statement and NOT to your
+                personal confidence in judging the nature of the statement.
+            </p>
+            <p>
+                For each selected sentence, there is an optional comment text field, should
+                you wish to include any notes.  
+            </p>
+            <p>
+                Once you have completed tagging all the sentences that suggest active
+                metacognition, select the “submit” button. As long as each radio button
+                field has a selection, you will be presented with a new response to tag until
+                all responses (~ 250) have been tagged. Should you not be able to complete
+                tagging of the full set of responses in one sitting, simply logout and log back
+                in when you are ready to resume. 
+            </p>
+            {% if current_response_id == 1 %}
+                <a href="{% url 'tagging' %}">Begin tagging</a>
+            {% else %}
+                <a href="{% url 'tagging' %}">Resume tagging</a>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock content %}
+
+<style>
+
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f8ff; /* light blue background */
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+        background-color: #f8f9fa; /* grey box background */
+        padding: 20px;
+        margin: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    button,
+    a {
+        display: block;
+        width: 150px; /* Adjust width as needed */
+        margin: 0 auto;
+        text-align: center;
+        padding: 10px;
+        background-color: #007bff; /* blue button color */
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 15px;
+        border: none;
+    }
+
+    button:hover,
+    a:hover {
+        background-color: #0056b3; /* darker blue on hover */
+    }
+
+    .logout-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+</style>
