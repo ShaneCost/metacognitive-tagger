@@ -88,11 +88,16 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # }
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
-    )
-}
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'response',
+        'USER' : 'postgres',
+        'PASSWORD' : 'Ryresh123',
+        'PORT' : '5432',
+        'HOST' : 'localhost'
 
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -113,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend'
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 
@@ -139,6 +144,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+LOGIN_URL = 'accounts/login/'
 LOGIN_REDIRECT_URL = "instructions"
 LOGOUT_REDIRECT_URL = "home"
 
