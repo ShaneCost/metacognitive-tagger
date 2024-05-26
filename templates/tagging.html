@@ -207,6 +207,14 @@
         let forms = document.querySelectorAll('#forms .form')
         let allFieldsFilled = true; // Flag to track if all fields are filled
 
+        // Check if forms is None
+        if (forms.length === 0) {
+            let proceed = confirm("No sentences selected. Do you want to proceed?");
+            if (!proceed) {
+                return; // Exit the function if the user decides not to proceed
+            }
+        }
+
         forms.forEach((form, index ) => {
 
             // Get values from radio inputs
