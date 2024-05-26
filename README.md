@@ -1,4 +1,4 @@
-# Metacognition Selection Web App
+# Metacognition Tagger Web Application
 
 **Feature(s):**
 
