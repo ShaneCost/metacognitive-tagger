@@ -209,7 +209,7 @@
 
         // Check if forms is None
         if (forms.length === 0) {
-            let proceed = confirm("No sentences selected. Do you want to proceed?");
+            let proceed = confirm("No sentences were selected. Select ‘Cancel’ if you want to go back and tag one or more sentences in the response. Select ‘OK’ if there are no sentences in the response to tag.");
             if (!proceed) {
                 return; // Exit the function if the user decides not to proceed
             }
