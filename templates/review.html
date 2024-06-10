@@ -1,0 +1,148 @@
+{% block content %}
+<header>
+    <div class="review-button">
+        <a href="{% url 'instructions' %}" class="button">Review Instructions</a>
+    </div>
+    <div class="logout-button">
+        <form id="logout-form" method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</header>
+
+<br><br><br>
+
+<div class="container">
+    <form id="selection-form" method="post" action="{% url 'handle_selection' %}">
+        {% csrf_token %}
+        <input type="hidden" name="selected_value" id="selected_value">
+        {% for i in range %}
+            {% if i <= id %}
+                <div class="item-green" onclick="select({{ i }})">{{ i }}</div>
+            {% else %}
+                <div class="item-grey">{{ i }}</div>
+            {% endif %}
+        {% endfor %}
+    </form>
+</div>
+
+{% endblock content %}
+
+<script>
+    function select(i) {
+        document.getElementById('selected_value').value = i;
+        document.getElementById('selection-form').submit();
+    }
+</script>
+
+<style>
+     h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .clickable-sentence:hover{
+        background-color: rgb(200, 200, 200);
+        cursor: pointer;
+    }
+
+    progress {
+        width: 100%;
+        height: 30px;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        display: block;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f8ff; /* light blue background */
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+        background-color: #f8f9fa; /* grey box background */
+        padding: 20px;
+        margin: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem; /* Adds space between items */
+    }
+
+    .item-grey, .item-green {
+        border-radius: 5px;
+        color: black;
+        font-size: 2em;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        text-align: center;
+        padding: 20px;
+        border: 1px solid black;
+        width: 100px;
+        margin: 0.5rem;
+    }
+
+    .item-grey {
+        background-color: grey;
+    }
+
+    .item-green {
+        background-color: green;
+    }
+
+    .item-green:hover {
+        background-color: lightgreen;
+        cursor: pointer;
+    }
+
+    .logout-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .review-button {
+        position: absolute;
+        top: 10px;
+        right: 190px;
+    }
+
+    button,
+    a {
+        display: block;
+        width: 150px; /* Adjust width as needed */
+        margin: 0 auto;
+        text-align: center;
+        padding: 10px;
+        background-color: #007bff; /* blue button color */
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 15px;
+        border: none;
+        margin-top: 20px;
+    }
+
+    button:hover,
+    a:hover {
+        background-color: #0056b3; /* darker blue on hover */
+    }
+
+    .progress {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: flex;
+        width: 70%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #additional{
+        width: 100%;
+    }
+</style>

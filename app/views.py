@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponse
 import json
@@ -87,6 +87,38 @@ def save_data(request):
 
 class ThanksPageView(TemplateView):
     template_name = "thanks.html"
+
+class ExpertReviewView(TemplateView):
+    template_name = "review.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Retrieve the current user
+        current_user = self.request.user
+        context['id'] = current_user.current_response.id - 1 # This represent the number of responses the user has completed 
+        context['range'] = range(1, MAX + 1)
+        return context
+
+def handle_selection(request):
+    if request.method == "POST":
+        
+        selected_value = request.POST.get('selected_value')
+
+        student_response = get_object_or_404(StudentResponse, pk=selected_value)  # Assuming 'selected_value' is a primary key
+
+        current_user = request.user
+        experts = student_response.expert_responses.filter(user=current_user)
+
+        print(student_response)
+        print(experts)
+
+        return redirect('review')  # Adjust the redirect URL as needed
+
+
+        
+        
+
+    
 
 
     
