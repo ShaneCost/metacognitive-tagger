@@ -27,17 +27,26 @@
         <ul>
             {% for sentence in student_response|slice:"0:-1" %}
                     <!-- wrap each sentence in clickable div -->
-                    <span id="sentence{{ forloop.counter }}">{{ sentence }}.</span>
+                    <span id="sentence{{ forloop.counter }}">{{ sentence|safe }}</span>
             {% endfor %}
         </ul>
     </div>
 
-    <h1>Experts</h1>
-    <ul>
-        {% for expert in experts %}
-            <li>Sentence: {{ expert.sentence }}, User: {{ expert.user }}</li>
-        {% endfor %}
-    </ul>
+    
+    {% for expert in experts %}
+        <div class="container">
+            {{ expert.sentence }}
+            <br><br>
+            <li>&ensp;{{ expert.knowledge }}</li>
+            <li>&ensp;{{ expert.confidence }}</li>
+            <li>&ensp;{{ expert.strength }}</li>
+            <br>
+            <div class="comment-box">
+                &nbsp;{{ expert.comments }}
+            </div>
+        </div>
+    {% endfor %}
+    
 </body>
 </html>
 
@@ -110,6 +119,12 @@
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         display: block;
+    }
+
+    .comment-box {
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 1px;
     }
 
 </style>

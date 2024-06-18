@@ -124,7 +124,7 @@ def review_pt2(request):
     experts = request.session.get('experts', [])
 
     colored_student_response = []
-    expert_sentences = {review['sentence'] for review in experts}
+    expert_sentences = {review['sentence'].strip() for review in experts}
 
     for sentence in student_response:
         full_sentence = sentence.strip() + "."  # Add period and strip any extra spaces
