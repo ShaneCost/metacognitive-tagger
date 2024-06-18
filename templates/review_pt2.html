@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Review</title>
+</head>
+<header>
+    <div class="back-button">
+        <a href="{% url 'review' %}" class="button">Back</a>
+    </div>
+    <div class="review-button">
+        <a href="{% url 'tagging' %}" class="button">Continue Tagging</a>
+    </div>
+    <div class="instructions-button">
+        <a href="{% url 'instructions' %}" class="button">Instructions</a>
+    </div>
+    <div class="logout-button">
+        <form id="logout-form" method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</header>
+<br><br><br>
+<body>
+    <div class="container">
+        <h3>Student Response</h3>
+        <ul>
+            {% for sentence in student_response|slice:"0:-1" %}
+                    <!-- wrap each sentence in clickable div -->
+                    <span id="sentence{{ forloop.counter }}">{{ sentence }}.</span>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <h1>Experts</h1>
+    <ul>
+        {% for expert in experts %}
+            <li>Sentence: {{ expert.sentence }}, User: {{ expert.user }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
+<style>
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        display: block;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f8ff; /* light blue background */
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .back-button {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+
+    .logout-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .instructions-button {
+        position: absolute;
+        top: 10px;
+        right: 190px;
+    }
+
+    .review-button {
+        position: absolute;
+        top: 10px;
+        right: 390px;
+    }
+
+    button,
+    a {
+        display: block;
+        width: 150px; /* Adjust width as needed */
+        margin: 0 auto;
+        text-align: center;
+        padding: 10px;
+        background-color: #007bff; /* blue button color */
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 15px;
+        border: none;
+        margin-top: 20px;
+    }
+
+    button:hover,
+    a:hover {
+        background-color: #0056b3; /* darker blue on hover */
+    }
+
+    .container {
+        background-color: #f8f9fa; /* grey box background */
+        padding: 20px;
+        margin: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: block;
+    }
+
+</style>

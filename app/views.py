@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse
 from django.http import HttpResponse
 import json
@@ -105,18 +105,41 @@ def handle_selection(request):
         selected_value = request.POST.get('selected_value')
 
         student_response = get_object_or_404(StudentResponse, pk=selected_value)  # Assuming 'selected_value' is a primary key
-
+        
         current_user = request.user
         experts = student_response.expert_responses.filter(user=current_user)
 
-        print(student_response)
-        print(experts)
+        student_response_list = student_response.response.split(".")
 
-        return redirect('review')  # Adjust the redirect URL as needed
+        # Store data in session
+        request.session['student_response'] = student_response_list
+        request.session['experts'] = [
+            {'sentence': expert.sentence, 'user': expert.user.username, 'knowledge': expert.knowledge, 'confidence': expert.confidence, 'strength': expert.strength, 'comments': expert.comments} for expert in experts
+        ]
 
+        return redirect('review_pt2')  # Adjust the redirect URL as needed
 
+def review_pt2(request):
+    student_response = request.session.get('student_response', [])
+    experts = request.session.get('experts', [])
+
+    colored_student_response = []
+    expert_sentences = {review['sentence'] for review in experts}
+
+    for sentence in student_response:
+        full_sentence = sentence.strip() + "."  # Add period and strip any extra spaces
+        if full_sentence in expert_sentences:
+            modify_sentence = f"<span style='color: blue'>{sentence}.</span>"
+        else:
+            modify_sentence = f"<span style='color: black'>{sentence}.</span>"
+        colored_student_response.append(modify_sentence)
         
-        
+    context = {
+        'student_response': colored_student_response,
+        'experts': experts,
+    }
+
+    return render(request, 'review_pt2.html', context)
 
     
 
