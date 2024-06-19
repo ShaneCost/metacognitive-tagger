@@ -141,11 +141,11 @@ def review_pt2(request):
 
     return render(request, 'review_pt2.html', context)
 
-def superuser_only_view(request):
+def report(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden("You do not have permission to access this page.")
     # Your view logic here
-    return render(request, 'superuser_only_page.html')
+    return render(request, 'report.html')
 
     
 
