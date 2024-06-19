@@ -144,8 +144,10 @@ def review_pt2(request):
 def report(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden("You do not have permission to access this page.")
-    # Your view logic here
-    return render(request, 'report.html')
+    
+    # return all student responses
+    data = StudentResponse.objects.all().prefetch_related('expert_responses')
+    return render(request, 'report.html', {'data': data})
 
     
 
