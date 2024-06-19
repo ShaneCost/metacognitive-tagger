@@ -1,4 +1,5 @@
 {% block content %}
+<br><br><br>
     <div class="container">
         <header>
             <div class="logout-button">
@@ -8,7 +9,6 @@
                 </form>
             </div>
         </header>
-    
         <div class="instructions">
             <h1>Instructions</h1>
             <p>
@@ -54,16 +54,20 @@
                 <a href="{% url 'tagging' %}">Resume tagging</a>
             {% endif %}
         </div>
+
+        
     </div>
 
     {% if user.is_superuser %}
-        <div>
-            <h2>Admin Section</h2>
-            <p>This content is only visible to superusers.</p>
+        <div class="container">
+            <h1>Admin Section</h1>
+            <p style="text-align: center;">This content is <span style="color: red;">only</span> visible to superusers.</p>
             <a href="{% url 'report' %}">Get Report</a>
             <!-- Additional superuser-only content here -->
         </div>
     {% endif %}
+
+    
 
 {% endblock content %}
 
@@ -78,6 +82,7 @@
         height: 100vh;
         background-color: #f0f8ff; /* light blue background */
         font-family: Arial, Helvetica, sans-serif;
+        display: block;
     }
 
     .container {
