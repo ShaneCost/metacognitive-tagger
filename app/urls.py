@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import HomePageView, InstructionsPageView, TaggingPageView, save_data, ThanksPageView, ExpertReviewView, handle_selection, review_pt2, admin_only_view
+from .views import HomePageView, InstructionsPageView, TaggingPageView, save_data, ThanksPageView, ExpertReviewView, handle_selection, review_pt2, superuser_only_view
 
 urlpatterns = [
-    path('admin-only/', admin_only_view, name='admin_only_view'),
+    path('admin-only/', superuser_only_view, name='admin_only_view'),
     path("review_pt2/", review_pt2, name='review_pt2'),
     path("handle_selection/", handle_selection, name='handle_selection'),
     path("review/", ExpertReviewView.as_view(), name="review"),
