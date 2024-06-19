@@ -2,7 +2,7 @@ from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse
 from django.http import HttpResponse
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.views.generic import TemplateView
 from .models import StudentResponse, ExpertResponse
 
@@ -140,6 +140,12 @@ def review_pt2(request):
     }
 
     return render(request, 'review_pt2.html', context)
+
+def superuser_only_view(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("You do not have permission to access this page.")
+    # Your view logic here
+    return render(request, 'superuser_only_page.html')
 
     
 
