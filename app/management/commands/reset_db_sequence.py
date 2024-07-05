@@ -12,10 +12,10 @@ class Command(BaseCommand):
         # Reset sequence
         with connection.cursor() as cursor:
             if connection.vendor == 'postgresql':
-                cursor.execute("ALTER SEQUENCE myapp_mymodel_id_seq RESTART WITH 1;")
+                cursor.execute("ALTER SEQUENCE app_StudentResponse_id_seq RESTART WITH 1;")
             elif connection.vendor == 'sqlite':
-                cursor.execute("DELETE FROM sqlite_sequence WHERE name='myapp_mymodel';")
+                cursor.execute("DELETE FROM sqlite_sequence WHERE name='app_StudentResponse';")
             elif connection.vendor == 'mysql':
-                cursor.execute("ALTER TABLE myapp_mymodel AUTO_INCREMENT = 1;")
+                cursor.execute("ALTER TABLE app_StudentResponse AUTO_INCREMENT = 1;")
 
         self.stdout.write(self.style.SUCCESS('Successfully reset the primary key sequence'))
