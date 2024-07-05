@@ -16,7 +16,8 @@
     <div class="container">
         <table>
             <tr>
-                <th>Response #</th>
+                <th>Response Number</th>
+                <th>Sentence</th>
                 <th>Expert</th>
                 <th>Type</th>
                 <th>Confidence</th>
@@ -27,6 +28,7 @@
                 {% for review in entry.expert_responses.all %}
                     <tr>
                         <td> {{ entry.id }} </td>
+                        <td> {{ review.sentence }} </td>
                         <td> {{ review.user }} </td>
                         <td> {{ review.knowledge }} </td>
                         <td> {{ review.confidence }} </td>
@@ -97,18 +99,19 @@
         width: 100%;
         border-collapse: collapse;
         margin: 20px 0;
-        font-size: 18px;
+        font-size: 16px;
         text-align: left;
     }
 
     th, td {
         padding: 12px;
-        border-bottom: 1px solid #ddd;
+        border: 1px solid #ddd;
     }
 
     th {
         background-color: #0056b3;
         color: white;
+        position:static;
     }
 
     tr:nth-child(even) {
