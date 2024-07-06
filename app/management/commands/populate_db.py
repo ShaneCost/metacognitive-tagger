@@ -25,7 +25,8 @@ class Command(BaseCommand):
             return
 
         for paragraph in paragraphs:
-            StudentResponse.objects.create(response=paragraph)
+            if not paragraph == "":
+                StudentResponse.objects.create(response=paragraph)
         
         self.stdout.write(self.style.SUCCESS('Successfully populated the database'))
 
