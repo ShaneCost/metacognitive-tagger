@@ -36,7 +36,7 @@ def extract_paragraphs(pdf_path):
         with fitz.open(pdf_path) as doc:
             for page in doc:
                 text = page.get_text()
-                paragraphs.extend(text.split('**'))
+                paragraphs.extend(text.split('********'))
     except RuntimeError as e:
         raise RuntimeError(f'MuPDF error: {e}')
     
