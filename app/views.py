@@ -6,7 +6,7 @@ from django.http import JsonResponse, HttpResponseForbidden
 from django.views.generic import TemplateView
 from .models import StudentResponse, ExpertResponse
 
-MAX = 10
+MAX = 372
 
 class HomePageView(TemplateView):
     template_name = "home.html"
