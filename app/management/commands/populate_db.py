@@ -16,7 +16,7 @@ class Command(BaseCommand):
         paragraphs = extract_paragraphs(pdf_path)
         
         for paragraph in paragraphs:
-            StudentResponse.objects.create(text=paragraph)
+            StudentResponse.objects.create(response=paragraph)
         
         self.stdout.write(self.style.SUCCESS('Successfully populated the database'))
 
