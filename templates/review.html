@@ -28,7 +28,7 @@
         {% csrf_token %}
         <input type="hidden" name="selected_value" id="selected_value">
         {% for i in range %}
-            {% if i <= id - 1 %}
+            {% if i <= id %}
                 <div class="item-green" onclick="select({{ i }})">{{ i }}</div>
             {% else %}
                 <div class="item-grey">{{ i }}</div>
