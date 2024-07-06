@@ -1,3 +1,6 @@
+### $ heroku run python manage.py reset_db_sequence
+### $ python manage.py reset_db_sequence
+
 from django.core.management.base import BaseCommand
 from django.db import connection
 from app.models import StudentResponse 

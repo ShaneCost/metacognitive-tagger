@@ -1,3 +1,4 @@
+### $ heroku run python manage.py create_normal_user _username_ _email_ _password_
 ### $ python manage.py create_normal_user _username_ _email_ _password_
 
 from django.core.management.base import BaseCommand
