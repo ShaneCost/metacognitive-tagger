@@ -25,8 +25,9 @@ class Command(BaseCommand):
             return
 
         for paragraph in paragraphs:
-            if not paragraph == "" or not paragraph == " ":
-                StudentResponse.objects.create(response=paragraph)
+            cleaned_paragraph = paragraph.strip()
+            if cleaned_paragraph:  # Ensure non-blank entries
+                StudentResponse.objects.create(response=cleaned_paragraph)
         
         self.stdout.write(self.style.SUCCESS('Successfully populated the database'))
 
@@ -37,8 +38,10 @@ def extract_paragraphs(pdf_path):
         with fitz.open(pdf_path) as doc:
             for page in doc:
                 text = page.get_text()
-                paragraphs.extend(text.split('********'))
+                # Ensure that we are splitting correctly and handle multiple splits
+                paragraphs.extend(filter(None, [para.strip() for para in text.split('********')]))
     except RuntimeError as e:
         raise RuntimeError(f'MuPDF error: {e}')
     
     return paragraphs
+
