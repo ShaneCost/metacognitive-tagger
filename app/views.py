@@ -57,6 +57,10 @@ def save_data(request):
             strength = entry.get('strength')
             comment = entry.get('comments')
 
+            # Don't allow a strength value to be saved if the confidence is set to N/A
+            if(confidence == 'N/A'):
+                strength = 'N/A'
+
             # Create ExpertResponse and associate it with the current_response
             expert_response = ExpertResponse.objects.create(
                     user=current_user,
