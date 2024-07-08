@@ -1,23 +1,24 @@
 {% block content %}
-<div class="progress">
-    <h3>Progress:&nbsp;</h3>
-    <progress value={{ id }} max="372"> </progress>
-    <h4>&nbsp;{{ id }}</h4>
-    <h4>/372</h4>
-</div>
-
 <header>
-    <div class="review-button">
-        <a href="{% url 'tagging' %}" class="button">Continue Tagging</a>
+    <div class="progress">
+        <h3>Progress:&nbsp;</h3>
+        <progress value="{{ id }}" max="372"></progress>
+        <h4>&nbsp;{{ id }}</h4>
+        <h4>/372</h4>
     </div>
-    <div class="instructions-button">
-        <a href="{% url 'instructions' %}" class="button">Instructions</a>
-    </div>
-    <div class="logout-button">
-        <form id="logout-form" method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
+    <div class="buttons">
+        <div class="review-button">
+            <a href="{% url 'tagging' %}" class="button">Continue Tagging</a>
+        </div>
+        <div class="instructions-button">
+            <a href="{% url 'instructions' %}" class="button">Instructions</a>
+        </div>
+        <div class="logout-button">
+            <form id="logout-form" method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        </div>
     </div>
 </header>
 
@@ -99,8 +100,8 @@
         text-align: center;
         padding: 20px;
         border: 1px solid black;
-        width: 60px;
-        height: 60px;
+        width: 70px;
+        height: 70px;
         margin: 0.5rem;
     }
 
@@ -138,7 +139,7 @@
     button,
     a {
         display: block;
-        width: 150px; /* Adjust width as needed */
+        width: 150px;
         margin: 0 auto;
         text-align: center;
         padding: 10px;
@@ -168,5 +169,13 @@
 
     #additional{
         width: 100%;
+    }
+
+    header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        box-sizing: border-box;
     }
 </style>
