@@ -118,7 +118,7 @@ def handle_selection(request):
         # Store data in session
         request.session['student_response'] = student_response_list
         request.session['experts'] = [
-            {'sentence': expert.sentence, 'user': expert.user.username, 'knowledge': expert.knowledge, 'confidence': expert.confidence, 'strength': expert.strength, 'comments': expert.comments} for expert in experts
+            {'sentence': expert.sentence, 'id': expert.user.id, 'knowledge': expert.knowledge, 'confidence': expert.confidence, 'strength': expert.strength, 'comments': expert.comments} for expert in experts
         ]
 
         return redirect('review_pt2')  # Adjust the redirect URL as needed

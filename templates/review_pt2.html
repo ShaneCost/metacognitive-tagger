@@ -22,33 +22,237 @@
 </header>
 <br><br><br>
 <body>
+    <!-- Student Response -->
     <div class="container">
         <h3>Student Response</h3>
         <ul>
             {% for sentence in student_response|slice:"0:-1" %}
-                    <!-- wrap each sentence in clickable div -->
-                    <span id="sentence{{ forloop.counter }}">{{ sentence|safe }}</span>
+                <span id="sentence{{ forloop.counter }}">{{ sentence|safe }}</span>
             {% endfor %}
         </ul>
     </div>
 
-    
+    <!-- Expert Responses -->
     {% for expert in experts %}
-        <div class="container">
-            {{ expert.sentence }}
-            <br><br>
-            <li>&ensp;{{ expert.knowledge }}</li>
-            <li>&ensp;{{ expert.confidence }}</li>
-            <li>&ensp;{{ expert.strength }}</li>
-            <br>
-            <div class="comment-box">
-                &nbsp;{{ expert.comments }}
+        <div id="control-{{ forloop.counter }}" style="display: block;"></div> 
+        <div class="container" id="{{ forloop.counter }}">  
+            <button class="edit-button" onclick="toggleEditMode({{ forloop.counter }}, {{ expert }})">
+                <i class="fas fa-pencil-alt">✏️</i>
+            </button>
+            <p><span class="field" data-field="sentence">{{ expert.sentence }}</span></p>
+            <div class="editable-fields">
+                <ul>
+                    <li>&ensp;<span class="field" data-field="knowledge">{{ expert.knowledge }}</span></li>
+                    <li>&ensp;<span class="field" data-field="confidence">{{ expert.confidence }}</span></li>
+                    <li>&ensp;<span class="field" data-field="strength">{{ expert.strength }}</span></li>
+                </ul>
+                <div class="comment-box">
+                    &nbsp;<span class="field" data-field="comments">{{ expert.comments }}</span>
+                </div>
             </div>
         </div>
     {% endfor %}
-    
 </body>
 </html>
+
+<script>
+    function toggleEditMode(containerId, expert) {
+        //  Get a clear container
+        container = document.getElementById(containerId)
+        container.innerHTML = " "
+
+        console.log(`control-${containerId}`)
+
+        const control = document.getElementById(`control-${containerId}`);
+
+        console.log("Control: ", control)
+
+        if (control.style.display === 'block') {
+
+            form = showForm(expert)
+
+            form.querySelectorAll('input[type="radio"]').forEach(radio => {
+                if (radio.value === expert.knowledge || 
+                    radio.value === expert.confidence || 
+                    radio.value === expert.strength) {
+                    radio.checked = true;
+                }
+            });
+
+            // Set the additional comments field
+            let commentField = form.querySelector('input[name="additional"]');
+            if (commentField) {
+                commentField.value = expert.comments;
+            }
+
+            // Create the "X" button to exit edit mode
+            const exitButton = document.createElement('button');
+            exitButton.textContent = '🚫';
+            exitButton.onclick = () => {
+                toggleEditMode(containerId, expert);  // Recursively toggle back to non-edit mode
+            };
+
+        // Add the "X" button before the form
+        form.insertBefore(exitButton, form.firstChild);
+
+            container.appendChild(form)
+            control.style.display = 'none'
+        } else {
+            // send back to non-edit mode 
+            control.style.display = 'block'
+            
+            container.innerHTML = `
+                    <button class="edit-button" onclick="toggleEditMode('${containerId}', ${JSON.stringify(expert)})">
+                        <i class="fas fa-pencil-alt">✏️</i>
+                    </button>
+                    <p><span class="field" data-field="sentence">${expert.sentence}</span></p>
+                    <div class="editable-fields">
+                        <ul>
+                            <li>&ensp;<span class="field" data-field="knowledge">${expert.knowledge}</span></li>
+                            <li>&ensp;<span class="field" data-field="confidence">${expert.confidence}</span></li>
+                            <li>&ensp;<span class="field" data-field="strength">${expert.strength}</span></li>
+                        </ul>
+                        <div class="comment-box">
+                            &nbsp;<span class="field" data-field="comments">${expert.comments}</span>
+                        </div>
+                    </div>
+            `;
+        }
+    }
+
+    // script to create form
+    function showForm(expert) {
+        let sentence = expert.sentence
+        let form = document.createElement('form');
+        form.setAttribute('class', 'form')
+        id = "form-" + sentence
+        form.setAttribute("id", id)
+
+        // puts sentence in form
+        div = document.createElement("div")
+        sent = document.createTextNode(sentence)
+        div.appendChild(sent)
+        div.setAttribute('name', 'sentence') 
+        form.appendChild(div)
+
+        form.appendChild(document.createElement('br'));
+        form.appendChild(document.createElement('br')); 
+
+        // Options for radio input
+        var knowledge = ['Declarative Knowledge', 'Procedural Knowledge', 'Unknown']
+        var confidence = ['Confident', 'Unconfident', 'N/A']
+        var strength = ['Strong', 'Mild']
+
+        createRadio(knowledge, form)
+        createRadio(confidence, form)
+        createRadio(strength, form)
+
+        // create text field for additional comments
+        let text = document.createElement('input')
+        text.setAttribute('type', 'text')
+        text.setAttribute('id', 'additional')
+        text.setAttribute('name', 'additional')
+
+        // create label
+        let label = document.createElement('label');
+        label.textContent = "Additional Comments:";
+        label.setAttribute('for', 'additional');
+        
+        // add text input + label to form
+        form.appendChild(label)
+        form.appendChild(text)
+        
+        // add form to document inside form div
+        createStrengthOptions(form, expert);
+
+        return form
+    }
+    
+    // Script that creates radio input fields
+    let s = 0
+    function createRadio(option_array, form) {
+        
+        option_array.forEach((option, index) => {
+            // Create a radio input element
+            let radio = document.createElement('input');
+            radio.setAttribute('type', 'radio');
+            radio.setAttribute('id', form.id + s++)
+            radio.setAttribute('name', option_array); // Set the same name for all radio buttons to create a group
+            radio.setAttribute('value', option); // Set the value of the radio button
+
+            // Create a label element
+            let label = document.createElement('label');
+            label.textContent = option; // Set the label text
+            
+            // Check if the option is 'Strong' or 'Mild'
+            if (option === 'Strong' || option === 'Mild') {
+                // Create a div with class 'strong-mild-div' if it doesn't exist
+                let strongMildDiv = form.querySelector('.strong-mild-div');
+                if (!strongMildDiv) {
+                    strongMildDiv = document.createElement('div');
+                    strongMildDiv.classList.add('strong-mild-div');
+                    strongMildDiv.style.display = 'none'; // Set display to 'none'
+                    form.appendChild(strongMildDiv);
+                }
+
+                // Append the radio button and label to the 'strong-mild-div'
+                strongMildDiv.appendChild(radio.cloneNode(true));
+                strongMildDiv.appendChild(label.cloneNode(true));
+
+                // Append a line break after each option in the 'strong-mild-div'
+                if (index < option_array.length - 1) {
+                    strongMildDiv.appendChild(document.createElement('br'));
+                }
+            } else {
+                // Append the radio button and label to the form
+                form.appendChild(radio);
+                form.appendChild(label);
+                
+                // Append a line break after each option
+                if (index < option_array.length - 1) {
+                    form.appendChild(document.createElement('br'));
+                }
+            }
+        });
+
+        // Append two line breaks after each input field
+        form.appendChild(document.createElement('br'));
+        form.appendChild(document.createElement('br'));
+    }
+
+    /// Script to create "Strength" radio options based on confidence selection
+    function createStrengthOptions(form, expert) {
+        let strongMildDiv = form.querySelector('.strong-mild-div');
+        let confidenceRadios = form.querySelectorAll('[name="Confident,Unconfident,N/A"]');
+
+        // Set initial visibility based on expert confidence
+        if (expert.confidence === 'Confident' || expert.confidence === 'Unconfident') {
+            strongMildDiv.style.display = 'block';
+        } else {
+            strongMildDiv.style.display = 'none';
+        }
+
+        // Add event listener to toggle visibility on confidence selection change
+        confidenceRadios.forEach(confidenceRadio => {
+            confidenceRadio.addEventListener('change', () => {
+                let value = getRadioValue(confidenceRadios);
+                strongMildDiv.style.display = (value === 'Confident' || value === 'Unconfident') ? 'block' : 'none';
+            });
+        });
+    }
+
+    // Script that retrieves the selected radio box from a radio input group
+    function getRadioValue(radio) {
+        for (var i = 0; i < radio.length; i++) {
+        // Check if the current radio button is checked
+        if (radio[i].checked) {
+            // Return the value of the checked radio button
+            return radio[i].value;
+        }
+        }
+    }
+    
+</script>
 
 <style>
     h1 {
@@ -63,42 +267,27 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
-        background-color: #f0f8ff; /* light blue background */
+        background-color: #f0f8ff;
         font-family: Arial, Helvetica, sans-serif;
     }
 
-    .back-button {
+    .back-button, .review-button, .instructions-button, .logout-button {
         position: absolute;
         top: 10px;
-        left: 10px;
     }
 
-    .logout-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-    }
+    .logout-button { right: 10px; }
+    .instructions-button { right: 190px; }
+    .review-button { right: 390px; }
+    .back-button { left: 10px; }
 
-    .instructions-button {
-        position: absolute;
-        top: 10px;
-        right: 190px;
-    }
-
-    .review-button {
-        position: absolute;
-        top: 10px;
-        right: 390px;
-    }
-
-    button,
-    a {
+    button, a {
         display: block;
-        width: 150px; /* Adjust width as needed */
+        width: 150px;
         margin: 0 auto;
         text-align: center;
         padding: 10px;
-        background-color: #007bff; /* blue button color */
+        background-color: #007bff;
         color: #fff;
         text-decoration: none;
         border-radius: 5px;
@@ -107,18 +296,31 @@
         margin-top: 20px;
     }
 
-    button:hover,
-    a:hover {
-        background-color: #0056b3; /* darker blue on hover */
+    button:hover, a:hover {
+        background-color: #0056b3;
     }
 
     .container {
-        background-color: #f8f9fa; /* grey box background */
+        background-color: #f8f9fa;
         padding: 20px;
         margin: 20px;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        display: block;
+        position: relative;
+    }
+
+    .edit-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .edit-button:hover {
+        transition: transform 0.2s ease-in-out;
     }
 
     .comment-box {
@@ -126,5 +328,6 @@
         border-radius: 5px;
         padding: 1px;
     }
-
 </style>
+
+
